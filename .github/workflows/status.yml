@@ -1,0 +1,27 @@
+# Haalt elke tien minuten de status op bij het NDW en publiceert de bestanden via GitHub Pages.
+name: Status verversen
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    environment:
+      name: github-pages
+    steps:
+      - uses: actions/checkout@v4
+      - name: Status ophalen
+        run: python3 status.py uit
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: uit
+      - uses: actions/deploy-pages@v4
